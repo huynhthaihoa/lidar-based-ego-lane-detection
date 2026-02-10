@@ -2,33 +2,42 @@
 
 **Author**: Huynh Thai Hoa
 
-## Proposed Solution
+## Literature Review
 
 As of my knowledge, **Ego Lane Detection from LIDAR point cloud** is still an open research topic, in which the proposed methods can be categorized into 2 directions:
 - **Image-processing-based**: these methods rely on heuristics/conventional image processing algorithms such as denoising, edge detection, lane fitting, etc., which are sensitive with various environment conditions.
 - **Deep-learning-based**: this is the main chosen direction in recent years thanks to the rapid revolution of hardwares, deep learning algorithms, and methods to collect high-quality ground truth data. Theoretically, given "enough" good training data, training strategy, and a sufficient architecture, deep learning models can produce a more robust lane detection prediction than the classical **image-processing-based** approaches.
 
+## Proposed Solution
+
 ![Proposed solution](images/flow.png)
 
 My proposed solution includes 5 steps (and 1 more additional step to be considered), as illustrated in the above figure:
-- **1. Ground Point Extraction**: in this step, I would like to extract the points inside the **ground plane**, which is called as **ground points**, from the entire input pointcloud data, with the assumption is that the lanes should be on the ground.
 
-- **2. Intensity Histogram Build**: given the tip from the README file (the value of `intensity` is important to distinguish between **lane point** and **non-lane point**), as well as other references, **lane points** in the pointcloud usually have a more distinct and prominent intensity distribution, which appear as high peaks, compared to **non-lane points**. Therefore, I build a histogram of `intensity` from **ground points**, with respect to the `y` value bins.
+### 1. Ground Point Extraction 
+In this step, I would like to extract the points inside the **ground plane**, which is called as **ground points**, from the entire input pointcloud data, with the assumption is that the lanes should be on the ground.
 
-- **3. Intensity Peaks Detection**: from the intensity histogram that was built from the previous step, I find every intensity peak that potentially consist of `intensity` of the lane points as well. Then, the `intensity peaks` with respect to the left and right lane can be obtained using the following 2 assumptions:
+### 2. Intensity Histogram Build 
+Given the tip from the README file (the value of `intensity` is important to distinguish between **lane point** and **non-lane point**), as well as other references, **lane points** in the pointcloud usually have a more distinct and prominent intensity distribution, which appear as high peaks, compared to **non-lane points**. Therefore, I build a histogram of `intensity` from **ground points**, with respect to the `y` value bins.
+
+### 3. Intensity Peaks Detection
+From the intensity histogram that was built from the previous step, I find every intensity peak that potentially consist of `intensity` of the lane points as well. Then, the `intensity peaks` with respect to the left and right lane can be obtained using the following 2 assumptions:
   - **3.1.** Dividing the `y` field values into to half with respect to the ego vehicle (`0, 0`) as the center, **the left lane points** should belong to the left half (`y >= 0`), whereas **the right lane points** should belongs to the right half (`y < 0`)
 
    - **3.2.** The **width** (`y` differences between **left lane** and **right lane**) should be within a specified baseline
 
-- **4. Lane Points Detection**: from the previous step, we obtained the peak `y` value position from the **2 lane peaks**, I start to detect every point that potentially belong to **the left and right lane** using **the sliding window approach**. Specifically, we start from the peak `y` position mentioned above, and iteratively move along the ego vehicle positive `x-axis` direction to detect the remaining points on the lane.
+### 4. Lane Points Detection
+From the previous step, we obtained the peak `y` value position from the **2 lane peaks**, I start to detect every point that potentially belong to **the left and right lane** using **the sliding window approach**. Specifically, we start from the peak `y` position mentioned above, and iteratively move along the ego vehicle positive `x-axis` direction to detect the remaining points on the lane.
 
-- **5. Polynomial Fitting**: this step involves estimating a **polynomial curve** on `x` and `y` fields of **the detected lane points**, using a **3-degree polynomial** represented as `y = coef[0] * x ** 3 + coef[1] * x ** 2 + coef[2] * x + coef[3]` (according to the assignment's requirement)
+### 5. Polynomial Fitting
+This step involves estimating a **polynomial curve** on `x` and `y` fields of **the detected lane points**, using a **3-degree polynomial** represented as `y = coef[0] * x ** 3 + coef[1] * x ** 2 + coef[2] * x + coef[3]` (according to the assignment's requirement)
 
-- **6. Parallel Fitting (optional)**: this step aims to refine the estimated coefficients using the assumption that 2 lanes usually parallel to each other along the road. I implemented this step but decided to not use it since it may violate with the constraint in step **3.1**.
+### 6. Parallel Fitting (optional)
+This step aims to refine the estimated coefficients using the assumption that 2 lanes usually parallel to each other along the road. I implemented this step but decided to not use it since it may violate with the constraint in step **3.1**.
 
 ## Requirements
 
-### System Specifications:
+### System Specifications
 - Ubuntu 22.04.3 LTS OS
 - 8GB RAM
 - Intel Core i5-1135G7 2.40GHz x 8 processor.
@@ -105,8 +114,6 @@ I refactored and organized my code into 3 files:
    - *pipeline(self, input_path)*: run end-to-end lane detection pipeline given the input from `input_path`, this function will also generate the outputs (figures and text files)
 
    - *apply_parallel_fitting(self, coefs, errs, xs)*: apply parallel constraint fitting to refine the estimated polynomial coefficients (this method was not used in this solution)
-
----
 
 In `main.py`, I parse the hyperparameter configuration from the config file `configs.yml` to initialize the `LaneDetector` object named `detector`. Function `glob` retrieves all `.bin` file in `pointcloud` directory, then each file is processed end-to-end by `detector.pipeline` method call.
 
