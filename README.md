@@ -26,12 +26,13 @@ My proposed solution includes 5 steps (and 1 more additional step to be consider
 
 - **6. Parallel Fitting (optional)**: this step aims to refine the estimated coefficients using the assumption that 2 lanes usually parallel to each other along the road. I implemented this step but decided to not use it since it may violate with the constraint in step **3.1**.
 
-## Implementation
+## Requirements
 
-Since the proposed solution requires many linear algebra calculations (polynomial fitting, maxima location, etc.), I decided to use Python as the implementation language, so that I can experiment, conceptualize and visualize the solution more quickly and efficiently. All the experiments were conducted on the computer system with Ubuntu 22.04.3 LTS OS, 8GB RAM, and Intel Core i5-1135G7 2.40GHz x 8 processor.
-
+### System Specifications:
+- Ubuntu 22.04.3 LTS OS
+- 8GB RAM
+- Intel Core i5-1135G7 2.40GHz x 8 processor.
 ### Dependencies
-
 I keep the dependencies as concise and minimal as possible, following the dependencies that was used in the sample code `data_visualize.py`. You can check the dependencies in `requirements.txt`:
 ```
 matplotlib==3.6.2
@@ -53,7 +54,7 @@ conda activate lane_test
 pip install -r requirements.txt
 ```
 
-### Folder Structure
+## Folder Structure
 
     .
     |             ├─── ....jpg
@@ -71,14 +72,14 @@ pip install -r requirements.txt
     ├── requirements.txt                  # Dependencies
     .
 
-### Code Structure
+## Code Structure
 
 I refactored and organized my code into 3 files:
 - **lane_detector.py**: define the `LaneDetector` class, which is basically the full implementation of my prosposed solution. 
 - **main.py**: entry file to run the proposed solution on input `bin` files and generate corresponding outputs. 
 - **data_visualize.py**: I made a minor update in the file `data_visualize.py` from the assignment zip file, so that you can visualize and check my outputs
 
----
+## Code Brief Explanation
 
 `LaneDetector` class consists of these methods:
   - *read_pointcloud_data(self, input_path)*: get the pointcloud data from the input file named `input_path`
@@ -110,7 +111,7 @@ I refactored and organized my code into 3 files:
 In `main.py`, I parse the hyperparameter configuration from the config file `configs.yml` to initialize the `LaneDetector` object named `detector`. Function `glob` retrieves all `.bin` file in `pointcloud` directory, then each file is processed end-to-end by `detector.pipeline` method call.
 
 
-### Output reproduction
+## Output Reproduction
 
 - To reproduce the outputs, please run the file `main.py`:
 
@@ -120,7 +121,7 @@ python main.py
 
 - (Optional) You can also adjust the hyperparameter values in configuration file `configs.yml` and rerun `main.py` to generate outputs with different setup
 
-### Output visualization
+## Output Visualization
 
 To visualize the pointcloud + detected lane output, please run the customized file `data_visualize.py`:
 
