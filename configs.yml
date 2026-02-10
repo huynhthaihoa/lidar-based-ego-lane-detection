@@ -1,0 +1,31 @@
+
+# directory to save algorithm output figures (peak detection + lane detection)
+figure_dir: figures
+
+# directory to save coefficient outputs
+output_dir: output
+
+# maximum distance from a point to the plane to be considered an inlier (for Ground Point Extraction)
+distance_threshold: 0.05
+
+# the number of iterations that were needed for the sample consensus (for Ground Point Extraction)
+num_iterations: 100
+
+# hyperparameter to setup intensity value bin (for Intensity Histogram Build)
+intensity_bin_res: 0.2
+
+# hyperparameter to setup y value bin (for Lane Detection)
+horizontal_bin_res: 0.8
+
+# hyperparameter to setup the baseline "width" between 2 lanes (for Intensity Peak Detection)
+lane_width: 2
+
+# the calculated lane width will be checked to see if it within this bound value or not (for Intensity Peak Detection)
+lane_bound_threshold: 0.5
+
+
+# polynomial degree. Defaults to 3 (according to the assignment's requirement).
+degree: 3
+
+# number of lanes. Defaults to 2 (according to the assignment requirements).
+num_lanes: 2
